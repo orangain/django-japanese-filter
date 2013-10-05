@@ -1,5 +1,6 @@
 # coding: utf-8
 
+import re
 from unicodedata import east_asian_width
 
 from django import template
@@ -46,6 +47,21 @@ def _truncatewidth(value, cut_width, truncate = '...'):
             return value[:i] + truncate
 
     return value
+
+
+@register.filter(name="linebreaksspace")
+@stringfilter
+def linebreaksspace(value):
+    return _linebreaksspace(value)
+
+LINEBREAKS_RE = re.compile(ur'[\r\n]+')
+
+def _linebreaksspace(value):
+    ur"""
+>>> print _linebreaksspace(u'あい\nう\nえお')
+あい う えお
+    """
+    return LINEBREAKS_RE.sub(u' ', value)
 
 if __name__ == '__main__':
     import doctest
